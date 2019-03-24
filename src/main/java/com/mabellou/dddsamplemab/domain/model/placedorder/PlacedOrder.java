@@ -28,6 +28,22 @@ public class PlacedOrder implements Entity<PlacedOrder> {
         this.placedOrderLines = placedOrderLines;
     }
 
+    public PlacedOrderId placedOrderId() {
+        return placedOrderId;
+    }
+
+    public LocalDateTime creationDate() {
+        return creationDate;
+    }
+
+    public CustomerId customer() {
+        return customer;
+    }
+
+    public List<PlacedOrderLine> placedOrderLines() {
+        return placedOrderLines;
+    }
+
     @Override
     public boolean sameIdentityAs(PlacedOrder other) {
         return other != null && placedOrderId.equals(other.placedOrderId);

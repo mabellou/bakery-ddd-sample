@@ -3,7 +3,6 @@ package com.mabellou.dddsamplemab.infrastructure.persistence.inmem;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.AvailableProduct;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.Catalog;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.ProductId;
-import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import org.springframework.stereotype.Component;
 
 import java.util.*;

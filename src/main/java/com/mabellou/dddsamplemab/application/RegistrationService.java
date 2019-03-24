@@ -22,7 +22,7 @@ public class RegistrationService{
     public String registerNewCustomer(RegistrationCommand registrationCommand) {
         final CustomerId customerId = registeredCustomerList.nextCustomerId();
 
-        final Customer customer = new Customer(
+        Customer customer = new Customer(
                 customerId,
                 new CustomerName(registrationCommand.username),
                 new Address(

@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/catalog")
 public class CatalogController {
 
-    private CatalogService catalogService;
+    private final CatalogService catalogService;
 
     @Autowired
     public CatalogController(CatalogService catalogService) {

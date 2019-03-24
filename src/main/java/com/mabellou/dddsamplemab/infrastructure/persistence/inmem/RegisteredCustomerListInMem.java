@@ -3,7 +3,6 @@ package com.mabellou.dddsamplemab.infrastructure.persistence.inmem;
 import com.mabellou.dddsamplemab.domain.model.customer.Customer;
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import com.mabellou.dddsamplemab.domain.model.customer.RegisteredCustomerList;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
