@@ -38,6 +38,7 @@ public class CatalogAcceptanceTest extends AbstractAcceptanceTest {
             .log().all()
             .body("id", everyItem(notNullValue()))
             .body("name", everyItem(notNullValue()))
+            .body("unitPrice", everyItem(notNullValue()))
         ;
     }
 }

@@ -5,6 +5,7 @@ import com.mabellou.dddsamplemab.domain.model.availableproduct.Catalog;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.ProductId;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @Component
@@ -39,7 +40,8 @@ public class CatalogInMem implements Catalog {
                 productId,
                 new AvailableProduct(
                         productId,
-                        "Pain au chocolat"
+                        "Pain au chocolat",
+                        new BigDecimal(1.0)
                 )
         );
     }
@@ -51,7 +53,8 @@ public class CatalogInMem implements Catalog {
                 productId,
                 new AvailableProduct(
                         productId,
-                        "Croissant"
+                        "Croissant",
+                        new BigDecimal(1.0)
                 )
         );
     }
@@ -63,7 +66,8 @@ public class CatalogInMem implements Catalog {
                 productId,
                 new AvailableProduct(
                         productId,
-                        "Baguette"
+                        "Baguette",
+                        new BigDecimal(0.7)
                 )
         );
     }

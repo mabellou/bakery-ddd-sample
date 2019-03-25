@@ -2,6 +2,7 @@ package com.mabellou.dddsamplemab.domain.model.availableproduct;
 
 import com.mabellou.dddsamplemab.domain.shared.Entity;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class AvailableProduct implements Entity<AvailableProduct> {
@@ -9,17 +10,20 @@ public class AvailableProduct implements Entity<AvailableProduct> {
     private ProductId productId;
     private String name;
     private String description;
+    private BigDecimal unitPrice;
 
-    public AvailableProduct(ProductId productId, String name) {
+    public AvailableProduct(ProductId productId, String name, BigDecimal unitPrice) {
         Objects.requireNonNull(productId);
         Objects.requireNonNull(name);
+        Objects.requireNonNull(unitPrice);
 
         this.productId = productId;
         this.name = name;
+        this.unitPrice = unitPrice;
     }
 
-    public AvailableProduct(ProductId productId, String name, String description) {
-        this(productId, name);
+    public AvailableProduct(ProductId productId, String name, BigDecimal unitPrice, String description) {
+        this(productId, name, unitPrice);
 
         Objects.requireNonNull(description);
         this.description = description;
@@ -35,6 +39,10 @@ public class AvailableProduct implements Entity<AvailableProduct> {
 
     public String description(){
         return description;
+    }
+
+    public BigDecimal unitPrice(){
+        return unitPrice;
     }
 
     @Override
@@ -60,6 +68,7 @@ public class AvailableProduct implements Entity<AvailableProduct> {
         return "AvailableProduct{" +
                 "productId=" + productId +
                 ", name='" + name + '\'' +
+                ", unitPrice='" + unitPrice + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }
