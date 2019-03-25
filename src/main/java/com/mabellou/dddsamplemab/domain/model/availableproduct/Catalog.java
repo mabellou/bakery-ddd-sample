@@ -4,5 +4,7 @@ import java.util.List;
 
 public interface Catalog {
     List<AvailableProduct> findAll();
+    AvailableProduct findById(ProductId productId);
     ProductId nextProductId();
+    void add(AvailableProduct product);
 }

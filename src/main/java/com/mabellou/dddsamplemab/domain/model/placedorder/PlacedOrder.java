@@ -3,6 +3,7 @@ package com.mabellou.dddsamplemab.domain.model.placedorder;
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import com.mabellou.dddsamplemab.domain.shared.Entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +43,12 @@ public class PlacedOrder implements Entity<PlacedOrder> {
 
     public List<PlacedOrderLine> placedOrderLines() {
         return placedOrderLines;
+    }
+
+    public BigDecimal totalPrice(){
+        return placedOrderLines.stream()
+                .map(PlacedOrderLine::totalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     @Override

@@ -1,12 +1,8 @@
 package com.mabellou.dddsamplemab.application;
 
 import com.mabellou.dddsamplemab.application.command.PlaceAnOrderCommand;
-import com.mabellou.dddsamplemab.domain.model.availableproduct.ProductId;
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
-import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrder;
-import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrderId;
-import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrderLine;
-import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrderRepository;
+import com.mabellou.dddsamplemab.domain.model.placedorder.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +17,13 @@ public class PlacedOrderService {
     private Logger logger = LoggerFactory.getLogger(PlacedOrderService.class);
 
     private PlacedOrderRepository placedOrderRepository;
+    private PlacedOrderLineService placedOrderLineService;
 
     @Autowired
-    public PlacedOrderService(final PlacedOrderRepository placedOrderRepository) {
+    public PlacedOrderService(final PlacedOrderRepository placedOrderRepository,
+                              final PlacedOrderLineService placedOrderLineService) {
         this.placedOrderRepository = placedOrderRepository;
+        this.placedOrderLineService = placedOrderLineService;
     }
 
     public String placeAnOrder(PlaceAnOrderCommand placeAnOrderCommand){
@@ -46,10 +45,7 @@ public class PlacedOrderService {
 
     private List<PlacedOrderLine> toPlacedOrderLines(PlaceAnOrderCommand placeAnOrderCommand){
         return placeAnOrderCommand.orderLines.stream()
-                .map(orderLine -> new PlacedOrderLine(
-                        orderLine.itemNumber,
-                        new ProductId(orderLine.productId)
-                ))
+                .map(orderLine -> placedOrderLineService.placeOrderLine(orderLine.productId, orderLine.itemNumber))
                 .collect(Collectors.toList());
     }
 }

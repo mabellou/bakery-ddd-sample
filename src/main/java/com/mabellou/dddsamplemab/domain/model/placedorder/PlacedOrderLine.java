@@ -3,24 +3,36 @@ package com.mabellou.dddsamplemab.domain.model.placedorder;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.ProductId;
 import com.mabellou.dddsamplemab.domain.shared.ValueObject;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class PlacedOrderLine implements ValueObject<PlacedOrderLine> {
     private final Integer itemNumber;
-    private final ProductId product;
-
+    private final ProductId productId;
+    private final BigDecimal unitPrice;
 
     public PlacedOrderLine(final Integer itemNumber,
-                           final ProductId product) {
+                           final ProductId productId,
+                           final BigDecimal unitPrice) {
+        Objects.requireNonNull(itemNumber);
+        Objects.requireNonNull(productId);
+        Objects.requireNonNull(unitPrice);
+
         this.itemNumber = itemNumber;
-        this.product = product;
+        this.productId = productId;
+        this.unitPrice = unitPrice;
+    }
+
+    public BigDecimal totalPrice(){
+        return unitPrice.multiply(new BigDecimal(itemNumber));
     }
 
     @Override
     public boolean sameValueAs(PlacedOrderLine other) {
         return other != null &&
                 Objects.equals(itemNumber, other.itemNumber) &&
-                Objects.equals(product, other.product);
+                Objects.equals(productId, other.productId) &&
+                Objects.equals(unitPrice, other.unitPrice);
     }
 
     @Override
@@ -33,6 +45,6 @@ public class PlacedOrderLine implements ValueObject<PlacedOrderLine> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(itemNumber, product);
+        return Objects.hash(itemNumber, productId, unitPrice);
     }
 }

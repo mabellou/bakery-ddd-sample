@@ -12,6 +12,9 @@ import java.util.*;
 public class CatalogInMem implements Catalog {
 
     private Map<ProductId, AvailableProduct> catalogDb;
+    private static final String PAIN_AU_CHOCOLAT = "Pain au chocolat";
+    private static final String CROISSANT = "Croissant";
+    private static final String BAGUETTE = "Baguette";
 
     public CatalogInMem() {
         this.catalogDb = new HashMap<>();
@@ -26,6 +29,11 @@ public class CatalogInMem implements Catalog {
     }
 
     @Override
+    public AvailableProduct findById(ProductId productId){
+        return catalogDb.get(productId);
+    }
+
+    @Override
     public ProductId nextProductId() {
         String random = UUID.randomUUID().toString().toUpperCase();
         return new ProductId(
@@ -33,42 +41,44 @@ public class CatalogInMem implements Catalog {
         );
     }
 
+    @Override
+    public void add(AvailableProduct availableProduct){
+        catalogDb.put(availableProduct.productId(), availableProduct);
+    }
+
     private void addPainAuChocolat(){
         ProductId productId = this.nextProductId();
 
-        catalogDb.put(
-                productId,
-                new AvailableProduct(
-                        productId,
-                        "Pain au chocolat",
-                        new BigDecimal(1.0)
-                )
+        add(
+            new AvailableProduct(
+                    productId,
+                    PAIN_AU_CHOCOLAT,
+                    new BigDecimal(1.0)
+            )
         );
     }
 
     private void addCroissant(){
         ProductId productId = this.nextProductId();
 
-        catalogDb.put(
-                productId,
-                new AvailableProduct(
-                        productId,
-                        "Croissant",
-                        new BigDecimal(1.0)
-                )
+        add(
+            new AvailableProduct(
+                    productId,
+                    CROISSANT,
+                    new BigDecimal(1.0)
+            )
         );
     }
 
     private void addBaguette(){
         ProductId productId = this.nextProductId();
 
-        catalogDb.put(
-                productId,
-                new AvailableProduct(
-                        productId,
-                        "Baguette",
-                        new BigDecimal(0.7)
-                )
+        add(
+            new AvailableProduct(
+                    productId,
+                    BAGUETTE,
+                    new BigDecimal(0.7)
+            )
         );
     }
 }
