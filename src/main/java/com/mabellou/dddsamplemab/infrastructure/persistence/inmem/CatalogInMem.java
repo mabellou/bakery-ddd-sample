@@ -29,8 +29,9 @@ public class CatalogInMem implements Catalog {
     }
 
     @Override
-    public AvailableProduct findById(ProductId productId){
-        return catalogDb.get(productId);
+    public Optional<AvailableProduct> findById(ProductId productId){
+        AvailableProduct availableProduct = catalogDb.get(productId);
+        return availableProduct == null ? Optional.empty() : Optional.of(availableProduct);
     }
 
     @Override

@@ -17,8 +17,9 @@ public class PlacedOrderRepositoryInMem implements PlacedOrderRepository {
     }
 
     @Override
-    public PlacedOrder find(PlacedOrderId placedOrderId) {
-        return placedOrderDb.get(placedOrderId);
+    public Optional<PlacedOrder> findById(PlacedOrderId placedOrderId) {
+        PlacedOrder placedOrder = placedOrderDb.get(placedOrderId);
+        return placedOrder == null ? Optional.empty() : Optional.of(placedOrder);
     }
 
     @Override

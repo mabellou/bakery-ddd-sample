@@ -33,7 +33,7 @@ public class RegistrationAcceptanceTest extends AbstractAcceptanceTest {
 
     @Test
     public void registerNewCustomer(){
-        assertThat(registeredCustomerList.findAll()).isEmpty();
+        int initialSize = registeredCustomerList.findAll().size();
 
         given()
             .contentType(ContentType.JSON)
@@ -46,6 +46,6 @@ public class RegistrationAcceptanceTest extends AbstractAcceptanceTest {
 
         List<Customer> registeredCustomers = registeredCustomerList.findAll();
 
-        assertThat(registeredCustomers).hasSize(1);
+        assertThat(registeredCustomers).hasSize(initialSize + 1);
     }
 }

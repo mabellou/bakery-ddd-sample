@@ -18,7 +18,8 @@ public class PlacedOrderLineService {
 
     public PlacedOrderLine placeOrderLine(String productIdString, Integer itemNumber){
         ProductId productId = new ProductId(productIdString);
-        AvailableProduct availableProduct = catalog.findById(productId);
+        AvailableProduct availableProduct = catalog.findById(productId)
+                .orElseThrow(() -> new IllegalStateException("product not found"));
         return new PlacedOrderLine(
                 itemNumber,
                 productId,

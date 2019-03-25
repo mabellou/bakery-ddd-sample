@@ -2,6 +2,8 @@ package com.mabellou.dddsamplemab.application;
 
 import com.mabellou.dddsamplemab.application.command.PlaceAnOrderCommand;
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
+import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
+import com.mabellou.dddsamplemab.domain.model.invoice.InvoiceBook;
 import com.mabellou.dddsamplemab.domain.model.placedorder.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +20,15 @@ public class PlacedOrderService {
 
     private PlacedOrderRepository placedOrderRepository;
     private PlacedOrderLineService placedOrderLineService;
+    private InvoiceBook invoiceBook;
 
     @Autowired
     public PlacedOrderService(final PlacedOrderRepository placedOrderRepository,
-                              final PlacedOrderLineService placedOrderLineService) {
+                              final PlacedOrderLineService placedOrderLineService,
+                              final InvoiceBook invoiceBook) {
         this.placedOrderRepository = placedOrderRepository;
         this.placedOrderLineService = placedOrderLineService;
+        this.invoiceBook = invoiceBook;
     }
 
     public String placeAnOrder(PlaceAnOrderCommand placeAnOrderCommand){
@@ -38,8 +43,14 @@ public class PlacedOrderService {
                 placedOrderLines
         );
 
+        Invoice invoice = placedOrder.generateInvoice(invoiceBook.nextInvoiceId());
+
         placedOrderRepository.add(placedOrder);
-        logger.info("A new order has been placed with the id :{}", placedOrder.placedOrderId().idString());
+        invoiceBook.add(invoice);
+
+        logger.info("A new order has been placed with the id :{}", placedOrder.placedOrderId());
+        logger.info("A new invoice has been add to the book with the id :{}", invoice.invoiceId());
+
         return placedOrder.placedOrderId().idString();
     }
 
@@ -47,5 +58,10 @@ public class PlacedOrderService {
         return placeAnOrderCommand.orderLines.stream()
                 .map(orderLine -> placedOrderLineService.placeOrderLine(orderLine.productId, orderLine.itemNumber))
                 .collect(Collectors.toList());
+    }
+
+    public Invoice getInvoice(String placedOrderId){
+        return invoiceBook.findByOrderId(new PlacedOrderId(placedOrderId))
+                .orElseThrow(() -> new IllegalStateException("invoice for order not found"));
     }
 }

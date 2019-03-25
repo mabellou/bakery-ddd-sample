@@ -1,6 +1,9 @@
 package com.mabellou.dddsamplemab.domain.model.placedorder;
 
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
+import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
+import com.mabellou.dddsamplemab.domain.model.invoice.InvoiceId;
+import com.mabellou.dddsamplemab.domain.model.invoice.InvoiceStatus;
 import com.mabellou.dddsamplemab.domain.shared.Entity;
 
 import java.math.BigDecimal;
@@ -11,21 +14,21 @@ import java.util.Objects;
 public class PlacedOrder implements Entity<PlacedOrder> {
     private PlacedOrderId placedOrderId;
     private LocalDateTime creationDate;
-    private CustomerId customer;
+    private CustomerId customerId;
     private List<PlacedOrderLine> placedOrderLines;
 
     public PlacedOrder(final PlacedOrderId placedOrderId,
                        final LocalDateTime creationDate,
-                       final CustomerId customer,
+                       final CustomerId customerId,
                        final List<PlacedOrderLine> placedOrderLines) {
         Objects.requireNonNull(placedOrderId);
         Objects.requireNonNull(creationDate);
-        Objects.requireNonNull(customer);
+        Objects.requireNonNull(customerId);
         Objects.requireNonNull(placedOrderLines);
 
         this.placedOrderId = placedOrderId;
         this.creationDate = creationDate;
-        this.customer = customer;
+        this.customerId = customerId;
         this.placedOrderLines = placedOrderLines;
     }
 
@@ -37,8 +40,8 @@ public class PlacedOrder implements Entity<PlacedOrder> {
         return creationDate;
     }
 
-    public CustomerId customer() {
-        return customer;
+    public CustomerId customerId() {
+        return customerId;
     }
 
     public List<PlacedOrderLine> placedOrderLines() {
@@ -49,6 +52,16 @@ public class PlacedOrder implements Entity<PlacedOrder> {
         return placedOrderLines.stream()
                 .map(PlacedOrderLine::totalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public Invoice generateInvoice(InvoiceId invoiceId){
+        return new Invoice(
+                invoiceId,
+                this.customerId,
+                this.placedOrderId,
+                InvoiceStatus.NOT_PAID,
+                this.totalPrice()
+        );
     }
 
     @Override
@@ -70,7 +83,7 @@ public class PlacedOrder implements Entity<PlacedOrder> {
         return Objects.hash(
                 placedOrderId,
                 creationDate,
-                customer,
+                customerId,
                 placedOrderLines
         );
     }

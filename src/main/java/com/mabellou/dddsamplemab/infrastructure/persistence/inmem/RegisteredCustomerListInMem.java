@@ -17,8 +17,9 @@ public class RegisteredCustomerListInMem implements RegisteredCustomerList {
     }
 
     @Override
-    public Customer find(CustomerId customerId) {
-        return customersDb.get(customerId);
+    public Optional<Customer> findById(CustomerId customerId) {
+        Customer customer = customersDb.get(customerId);
+        return customer == null ? Optional.empty() : Optional.of(customer);
     }
 
     @Override

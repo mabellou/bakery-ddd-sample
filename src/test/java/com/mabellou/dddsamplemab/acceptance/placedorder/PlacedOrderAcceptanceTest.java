@@ -13,6 +13,7 @@ import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrderRepository;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import java.util.List;
 import static com.mabellou.dddsamplemab.acceptance.TestObjects.*;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.*;
 
 public class PlacedOrderAcceptanceTest extends AbstractAcceptanceTest {
 
@@ -46,8 +47,8 @@ public class PlacedOrderAcceptanceTest extends AbstractAcceptanceTest {
     }
 
     @Test
-    public void placeAnOrder(){
-        assertThat(placedOrderRepository.findAll()).isEmpty();
+    public void placeAnOrderAndGetInvoice(){
+        int initSize = placedOrderRepository.findAll().size();
 
         Customer customer = createCustomer(registeredCustomerList.nextCustomerId());
         registeredCustomerList.register(customer);
@@ -75,7 +76,19 @@ public class PlacedOrderAcceptanceTest extends AbstractAcceptanceTest {
 
         List<PlacedOrder> placedOrders = placedOrderRepository.findAll();
 
-        assertThat(placedOrders).hasSize(1);
-        assertThat(placedOrders.get(0).totalPrice()).isEqualTo(new BigDecimal(3));
+        assertThat(placedOrders).hasSize(initSize + 1);
+        assertThat(placedOrders.get(initSize).totalPrice()).isEqualTo(new BigDecimal(3));
+
+        String id = placedOrders.get(initSize).placedOrderId().idString();
+
+        given()
+                .contentType(ContentType.JSON)
+                .get("/placedorder/" + id + "/invoice")
+        .then()
+                .statusCode(HttpStatus.SC_OK)
+                .log().all()
+                .body("amount", hasToString("3"))
+                .body("status", hasToString("NOT_PAID"))
+        ;
     }
 }

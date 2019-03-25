@@ -2,13 +2,14 @@ package com.mabellou.dddsamplemab.interfaces.rest;
 
 import com.mabellou.dddsamplemab.application.PlacedOrderService;
 import com.mabellou.dddsamplemab.application.command.PlaceAnOrderCommand;
+import com.mabellou.dddsamplemab.application.representation.InvoiceRepresentation;
+import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.websocket.server.PathParam;
 import java.net.URI;
 
 @Controller
@@ -31,5 +32,12 @@ public class PlacedOrderController {
         return ResponseEntity.created(uri).build();
     }
 
+    @GetMapping("/{id}/invoice")
+    public ResponseEntity getInvoice(@PathVariable("id") String orderId){
+        Invoice invoice = placedOrderService.getInvoice(orderId);
+        InvoiceRepresentation invoiceRepresentation = new InvoiceRepresentation(invoice);
+
+        return ResponseEntity.ok(invoiceRepresentation);
+    }
 
 }

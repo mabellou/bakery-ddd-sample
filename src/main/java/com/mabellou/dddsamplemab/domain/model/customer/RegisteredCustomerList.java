@@ -1,10 +1,11 @@
 package com.mabellou.dddsamplemab.domain.model.customer;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RegisteredCustomerList {
 
-    Customer find(CustomerId customerId);
+    Optional<Customer> findById(CustomerId customerId);
 
     List<Customer> findAll();
 
