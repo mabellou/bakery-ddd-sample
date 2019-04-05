@@ -37,6 +37,16 @@ public class TestObjects {
         );
     }
 
+    public static Address createNouvelleAddress(){
+        return new Address(
+                "Allée de la nouvelle rue",
+                "10",
+                "Schaerbeek",
+                "au deuxième étage"
+        );
+    }
+
+
     public static AvailableProduct createPainAuChocolat_1euro(ProductId productId){
         return new AvailableProduct(
                 productId,
@@ -62,6 +72,20 @@ public class TestObjects {
         payload.put("streetNumber", "16");
         payload.put("locality", "1030");
         payload.put("comment", "première sonnette sur la droite");
+        return payload.toString();
+    }
+
+    public static String nouvelleAddresseRequest(
+            CustomerId customerId,
+            Address address
+    ){
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode payload = mapper.createObjectNode();
+        payload.put("id", customerId.idString());
+        payload.put("street", address.street());
+        payload.put("streetNumber", address.streetNumber());
+        payload.put("locality", address.locality());
+        payload.put("comment", address.comment());
         return payload.toString();
     }
 

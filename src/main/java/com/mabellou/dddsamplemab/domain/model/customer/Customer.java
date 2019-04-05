@@ -26,8 +26,17 @@ public class Customer implements Entity<Customer> {
         this.email = email;
     }
 
+    public void changeCustomerAddress(Address address){
+        Objects.requireNonNull(address);
+        this.address = address;
+    }
+
     public CustomerId customerId(){
         return this.customerId;
+    }
+
+    public Address address(){
+        return address;
     }
 
     @Override

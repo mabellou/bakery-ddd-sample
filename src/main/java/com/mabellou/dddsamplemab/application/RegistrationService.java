@@ -1,11 +1,14 @@
 package com.mabellou.dddsamplemab.application;
 
+import com.mabellou.dddsamplemab.application.command.ChangeCustomerAddressCommand;
 import com.mabellou.dddsamplemab.application.command.RegistrationCommand;
 import com.mabellou.dddsamplemab.domain.model.customer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class RegistrationService{
@@ -38,5 +41,21 @@ public class RegistrationService{
 
         logger.info("Registered new Customer with id {}", customer.customerId().idString());
         return customer.customerId().idString();
+    }
+
+    public void changeCustomerAddress(ChangeCustomerAddressCommand command){
+        final CustomerId customerId = new CustomerId(command.customerId);
+
+        Customer customer = registeredCustomerList.findById(customerId)
+                .orElseThrow(()-> new IllegalStateException("Customer not found"));
+
+        Address address = new Address(
+                command.street,
+                command.streetNumber,
+                command.locality,
+                command.comment
+        );
+
+        customer.changeCustomerAddress(address);
     }
 }

@@ -24,6 +24,22 @@ public class Address implements ValueObject<Address>{
         this.comment = comment;
     }
 
+    public String street(){
+        return street;
+    }
+
+    public String streetNumber(){
+        return streetNumber;
+    }
+
+    public String locality(){
+        return locality;
+    }
+
+    public String comment(){
+        return comment;
+    }
+
     @Override
     public boolean sameValueAs(Address other) {
         return other!= null &&
