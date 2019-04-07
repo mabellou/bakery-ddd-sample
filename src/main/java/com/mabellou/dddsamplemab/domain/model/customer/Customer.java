@@ -2,6 +2,7 @@ package com.mabellou.dddsamplemab.domain.model.customer;
 
 import com.mabellou.dddsamplemab.domain.shared.Entity;
 import com.mabellou.dddsamplemab.domain.shared.Event;
+import com.mabellou.dddsamplemab.domain.shared.EventStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,7 @@ public class Customer implements Entity<Customer> {
     private Address address;
     private Email email;
     private List<Event> events = new ArrayList<>();
+    private Integer version;
 
     public Customer(final CustomerId customerId,
                     final CustomerName customerName,
@@ -36,8 +38,9 @@ public class Customer implements Entity<Customer> {
     }
 
 
-    public Customer(List<Event> events){
-        for(Event event: events){
+    public Customer(EventStream stream){
+        this.version = stream.version;
+        for(Event event: stream.events){
             mutate(event);
         }
     }
@@ -56,15 +59,16 @@ public class Customer implements Entity<Customer> {
     }
 
     protected void when(CustomerCreatedEvent event){
-        logger.info("The event {} is applied!", event.name);
+        logger.info("The event {} is applied!", event.eventName);
         this.customerId = event.customerId;
         this.customerName = event.customerName;
         this.address = event.address;
         this.email = event.email;
+        this.version = 0;
     }
 
     protected void when(AddressChangedEvent event){
-        logger.info("The event {} is applied!", event.name);
+        logger.info("The event {} is applied!", event.eventName);
         this.address = event.address;
     }
 
@@ -78,6 +82,10 @@ public class Customer implements Entity<Customer> {
 
     public List<Event> changes() {
         return events;
+    }
+
+    public Integer version(){
+        return version;
     }
 
     @Override

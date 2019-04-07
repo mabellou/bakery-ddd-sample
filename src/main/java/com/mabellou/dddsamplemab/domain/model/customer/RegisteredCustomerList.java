@@ -9,7 +9,7 @@ public interface RegisteredCustomerList {
 
     List<Customer> findAll();
 
-    void register(Customer customer);
+    void save(Customer customer);
 
     CustomerId nextCustomerId();
 }

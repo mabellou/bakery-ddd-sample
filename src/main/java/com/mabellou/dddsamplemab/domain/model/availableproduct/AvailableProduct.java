@@ -1,32 +1,58 @@
 package com.mabellou.dddsamplemab.domain.model.availableproduct;
 
 import com.mabellou.dddsamplemab.domain.shared.Entity;
+import com.mabellou.dddsamplemab.domain.shared.Event;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class AvailableProduct implements Entity<AvailableProduct> {
+    private Logger logger = LoggerFactory.getLogger(AvailableProduct.class);
+    private List<Event> events = new ArrayList<>();
 
     private ProductId productId;
     private String name;
     private String description;
     private BigDecimal unitPrice;
 
+
     public AvailableProduct(ProductId productId, String name, BigDecimal unitPrice) {
         Objects.requireNonNull(productId);
         Objects.requireNonNull(name);
         Objects.requireNonNull(unitPrice);
 
-        this.productId = productId;
-        this.name = name;
-        this.unitPrice = unitPrice;
+        apply(new AvailableProductCreatedEvent(productId, name, unitPrice));
     }
 
     public AvailableProduct(ProductId productId, String name, BigDecimal unitPrice, String description) {
-        this(productId, name, unitPrice);
+        Objects.requireNonNull(productId);
+        Objects.requireNonNull(name);
+        Objects.requireNonNull(unitPrice);
 
-        Objects.requireNonNull(description);
-        this.description = description;
+        apply(new AvailableProductCreatedEvent(productId, name, unitPrice, description));
+    }
+
+    public void apply(Event event){
+        events.add(event);
+        mutate(event);
+    }
+
+    protected void mutate(Event event){
+        if(event instanceof AvailableProductCreatedEvent){
+            when((AvailableProductCreatedEvent) event);
+        }
+    }
+
+    protected void when(AvailableProductCreatedEvent event){
+        logger.info("The event {} is applied!", event.name);
+        this.productId = event.productId;
+        this.name = event.name;
+        this.unitPrice = event.unitPrice;
+        this.description = event.description;
     }
 
     public ProductId productId(){
@@ -43,6 +69,10 @@ public class AvailableProduct implements Entity<AvailableProduct> {
 
     public BigDecimal unitPrice(){
         return unitPrice;
+    }
+
+    public List<Event> changes() {
+        return events;
     }
 
     @Override

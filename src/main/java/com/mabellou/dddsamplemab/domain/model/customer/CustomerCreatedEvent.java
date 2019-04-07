@@ -12,7 +12,7 @@ public class CustomerCreatedEvent extends Event {
                                 final CustomerName customerName,
                                 final Address address,
                                 final Email email) {
-        super(customerId, "CustomerCreatedEvent");
+        super(customerId, "Customer", "CustomerCreatedEvent");
         this.customerId = customerId;
         this.customerName = customerName;
         this.address = address;

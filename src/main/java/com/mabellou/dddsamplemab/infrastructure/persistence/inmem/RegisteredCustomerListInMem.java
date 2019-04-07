@@ -3,39 +3,49 @@ package com.mabellou.dddsamplemab.infrastructure.persistence.inmem;
 import com.mabellou.dddsamplemab.domain.model.customer.Customer;
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import com.mabellou.dddsamplemab.domain.model.customer.RegisteredCustomerList;
+import com.mabellou.dddsamplemab.domain.shared.EntityId;
+import com.mabellou.dddsamplemab.domain.shared.Event;
+import com.mabellou.dddsamplemab.domain.shared.EventStore;
+import com.mabellou.dddsamplemab.domain.shared.EventStream;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class RegisteredCustomerListInMem implements RegisteredCustomerList {
 
-    private Map<CustomerId, Customer> customersDb;
+    private EventStore eventStore;
 
-    public RegisteredCustomerListInMem() {
-        this.customersDb = new HashMap<>();
+    @Autowired
+    public RegisteredCustomerListInMem(EventStore eventStore) {
+        this.eventStore = eventStore;
     }
 
     @Override
     public Optional<Customer> findById(CustomerId customerId) {
-        Customer customer = customersDb.get(customerId);
-        return customer == null ? Optional.empty() : Optional.of(customer);
+        EventStream eventStream = eventStore.loadEventStream(customerId);
+        if(eventStream.events.isEmpty()){
+          return Optional.empty();
+        }
+        return Optional.of(new Customer(eventStream));
     }
 
     @Override
     public List<Customer> findAll() {
-        return new ArrayList<>(customersDb.values());
+        List<EventStream> eventStreams = eventStore.loadEventStreams("Customer");
+        return eventStreams.stream()
+                .map(Customer::new)
+                .collect(Collectors.toList());
     }
 
+
     @Override
-    public void register(Customer customer) {
-        CustomerId id = customer.customerId();
-
-        if(customersDb.get(id) != null){
-            throw new IllegalStateException("The id already exists");
-        }
-
-        customersDb.put(id, customer);
+    public void save(Customer customer) {
+        eventStore.appendToStream(customer.customerId(), customer.version(), customer.changes());
     }
 
     @Override

@@ -6,7 +6,7 @@ public class AddressChangedEvent extends Event {
     public final Address address;
 
     public AddressChangedEvent(CustomerId customerId, Address address) {
-        super(customerId, "AddressChangedEvent");
+        super(customerId,  "Customer", "AddressChangedEvent");
         this.address = address;
     }
 }

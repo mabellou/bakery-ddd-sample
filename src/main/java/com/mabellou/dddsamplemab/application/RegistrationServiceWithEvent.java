@@ -3,8 +3,6 @@ package com.mabellou.dddsamplemab.application;
 import com.mabellou.dddsamplemab.application.command.ChangeCustomerAddressCommand;
 import com.mabellou.dddsamplemab.application.command.RegistrationCommand;
 import com.mabellou.dddsamplemab.domain.model.customer.*;
-import com.mabellou.dddsamplemab.domain.shared.EventStore;
-import com.mabellou.dddsamplemab.domain.shared.EventStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +15,17 @@ public class RegistrationServiceWithEvent implements RegistrationService{
 
     private Logger logger = LoggerFactory.getLogger(RegistrationServiceWithEvent.class);
 
-    private EventStore eventStore;
+    private RegisteredCustomerList registeredCustomerList;
 
     @Autowired
-    public RegistrationServiceWithEvent(EventStore eventStore) {
-        this.eventStore = eventStore;
+    public RegistrationServiceWithEvent(RegisteredCustomerList registeredCustomerList
+    ) {
+        this.registeredCustomerList = registeredCustomerList;
     }
 
     @Override
     public String registerNewCustomer(RegistrationCommand registrationCommand) {
-        final CustomerId customerId = eventStore.nextCustomerId();
+        final CustomerId customerId = registeredCustomerList.nextCustomerId();
 
         Customer customer = new Customer(
                 customerId,
@@ -40,7 +39,7 @@ public class RegistrationServiceWithEvent implements RegistrationService{
                 new Email(registrationCommand.email)
         );
 
-        eventStore.appendToStream(customerId, 0, customer.changes());
+        registeredCustomerList.save(customer);
 
         return customer.customerId().idString();
     }
@@ -49,9 +48,8 @@ public class RegistrationServiceWithEvent implements RegistrationService{
     public void changeCustomerAddress(ChangeCustomerAddressCommand command) {
         final CustomerId customerId = new CustomerId(command.customerId);
 
-        EventStream eventStream = eventStore.loadEventStream(customerId);
-
-        Customer customer = new Customer(eventStream.events);
+        Customer customer = registeredCustomerList.findById(customerId)
+                .orElseThrow(() -> new IllegalStateException("no customer for this id!"));
 
         Address address = new Address(
                 command.street,
@@ -62,6 +60,6 @@ public class RegistrationServiceWithEvent implements RegistrationService{
 
         customer.changeCustomerAddress(address);
 
-        eventStore.appendToStream(customerId, eventStream.version, customer.changes());
+        registeredCustomerList.save(customer);
     }
 }
