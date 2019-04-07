@@ -22,6 +22,7 @@ public class EventStoreInMem implements EventStore {
     public EventStoreInMem() {
         this.eventStore = new HashMap<>();
         this.eventStoreVersion = new HashMap<>();
+        this.eventStoreByEntity = new HashMap<>();
     }
 
     @Override
@@ -43,6 +44,9 @@ public class EventStoreInMem implements EventStore {
     @Override
     public List<EventStream> loadEventStreams(String entityName) {
         List<EntityId> eventIds = eventStoreByEntity.get(entityName);
+        if(eventIds == null){
+            return new ArrayList<>();
+        }
         return eventIds.stream()
                 .map(id -> new EventStream(eventStoreVersion.get(id), eventStore.get(id)))
                 .collect(Collectors.toList());
@@ -67,13 +71,15 @@ public class EventStoreInMem implements EventStore {
         }
 
         for(Event e: events){
-            String eventName = e.eventName;
-            List<EntityId> existingEventsByEntity = eventStoreByEntity.get(eventName);
+            String entityName = e.entityName;
+            List<EntityId> existingEventsByEntity = eventStoreByEntity.get(entityName);
             if(existingEventsByEntity == null || existingEventsByEntity.isEmpty()){
-                eventStoreByEntity.put(eventName, List.of(e.id));
+                List<EntityId> entityIds = new ArrayList<>();
+                entityIds.add(e.id);
+                eventStoreByEntity.put(entityName, entityIds);
             } else {
                 existingEventsByEntity.add(e.id);
-                eventStoreByEntity.put(eventName, existingEventsByEntity);
+                eventStoreByEntity.put(entityName, existingEventsByEntity);
             }
         }
     }

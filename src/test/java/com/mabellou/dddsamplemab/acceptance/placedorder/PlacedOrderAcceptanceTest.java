@@ -51,7 +51,7 @@ public class PlacedOrderAcceptanceTest extends AbstractAcceptanceTest {
         int initSize = placedOrderRepository.findAll().size();
 
         Customer customer = createCustomer(registeredCustomerList.nextCustomerId());
-        registeredCustomerList.register(customer);
+        registeredCustomerList.save(customer);
 
         AvailableProduct product1 = createPainAuChocolat_1euro(catalog.nextProductId());
         catalog.add(product1);
