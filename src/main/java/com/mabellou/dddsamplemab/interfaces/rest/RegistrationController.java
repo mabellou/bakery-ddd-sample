@@ -1,6 +1,7 @@
 package com.mabellou.dddsamplemab.interfaces.rest;
 
 import com.mabellou.dddsamplemab.application.RegistrationService;
+import com.mabellou.dddsamplemab.application.RegistrationServiceImpl;
 import com.mabellou.dddsamplemab.application.command.ChangeCustomerAddressCommand;
 import com.mabellou.dddsamplemab.application.command.RegistrationCommand;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ public class RegistrationController {
 
     private final RegistrationService registrationService;
 
-    public RegistrationController(final RegistrationService registrationService) {
+    public RegistrationController(final RegistrationServiceImpl registrationService) {
         this.registrationService = registrationService;
     }
 
