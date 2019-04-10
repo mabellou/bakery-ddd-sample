@@ -1,7 +1,5 @@
 package com.mabellou.dddsamplemab.infrastructure.persistence.inmem;
 
-import com.mabellou.dddsamplemab.domain.model.customer.Customer;
-import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import com.mabellou.dddsamplemab.domain.shared.EntityId;
 import com.mabellou.dddsamplemab.domain.shared.Event;
 import com.mabellou.dddsamplemab.domain.shared.EventStore;
