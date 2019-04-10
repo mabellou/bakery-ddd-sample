@@ -45,8 +45,8 @@ public class PlacedOrderService {
 
         Invoice invoice = placedOrder.generateInvoice(invoiceBook.nextInvoiceId());
 
-        placedOrderRepository.add(placedOrder);
-        invoiceBook.add(invoice);
+        placedOrderRepository.save(placedOrder);
+        invoiceBook.save(invoice);
 
         logger.info("A new order has been placed with the id :{}", placedOrder.placedOrderId());
         logger.info("A new invoice has been add to the book with the id :{}", invoice.invoiceId());

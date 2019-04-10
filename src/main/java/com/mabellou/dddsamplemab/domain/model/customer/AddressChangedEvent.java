@@ -9,4 +9,11 @@ public class AddressChangedEvent extends Event {
         super(customerId,  "Customer", "AddressChangedEvent");
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n\t\t{" +
+                "address=" + address +
+                "}";
+    }
 }

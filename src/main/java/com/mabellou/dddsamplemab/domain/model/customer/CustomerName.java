@@ -29,4 +29,11 @@ public class CustomerName implements ValueObject<CustomerName> {
     public int hashCode() {
         return Objects.hash(username);
     }
+
+    @Override
+    public String toString() {
+        return "CustomerName{" +
+                "username='" + username + '\'' +
+                '}';
+    }
 }

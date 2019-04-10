@@ -60,4 +60,14 @@ public class Address implements ValueObject<Address>{
     public int hashCode() {
         return Objects.hash(street, streetNumber, locality, comment);
     }
+
+    @Override
+    public String toString() {
+        return "Address{" +
+                "street='" + street + '\'' +
+                ", streetNumber='" + streetNumber + '\'' +
+                ", locality='" + locality + '\'' +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
 }

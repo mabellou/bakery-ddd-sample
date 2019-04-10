@@ -3,46 +3,39 @@ package com.mabellou.dddsamplemab.infrastructure.persistence.inmem;
 import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrder;
 import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrderId;
 import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PlacedOrderRepositoryInMem implements PlacedOrderRepository {
 
-    private Map<PlacedOrderId, PlacedOrder> placedOrderDb;
+    private EventStoreInMem eventStore;
 
-    public PlacedOrderRepositoryInMem() {
-        this.placedOrderDb = new HashMap<>();
+    @Autowired
+    public PlacedOrderRepositoryInMem(EventStoreInMem eventStore) {
+        this.eventStore = eventStore;
     }
 
     @Override
     public Optional<PlacedOrder> findById(PlacedOrderId placedOrderId) {
-        PlacedOrder placedOrder = placedOrderDb.get(placedOrderId);
-        return placedOrder == null ? Optional.empty() : Optional.of(placedOrder);
+        return eventStore.findById(placedOrderId, PlacedOrder::new);
     }
 
     @Override
     public List<PlacedOrder> findAll() {
-        return new ArrayList<>(placedOrderDb.values());
+        return eventStore.findAll("PlacedOrder", PlacedOrder::new);
     }
 
     @Override
-    public void add(PlacedOrder placedOrder) {
-        PlacedOrderId id = placedOrder.placedOrderId();
-
-        if(placedOrderDb.get(id) != null){
-            throw new IllegalStateException("The id already exists");
-        }
-
-        placedOrderDb.put(id, placedOrder);
+    public void save(PlacedOrder placedOrder) {
+        eventStore.appendToStream(placedOrder.placedOrderId(), placedOrder.version(), placedOrder.changes());
     }
 
     @Override
     public PlacedOrderId nextPlacedOrderId() {
-        String random = UUID.randomUUID().toString().toUpperCase();
-        return new PlacedOrderId(
-                random.substring(0, random.indexOf("-"))
-        );
+        return eventStore.nextId(PlacedOrderId::new);
     }
 }

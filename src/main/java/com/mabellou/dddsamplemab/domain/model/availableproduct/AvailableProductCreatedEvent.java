@@ -30,4 +30,14 @@ public class AvailableProductCreatedEvent extends Event {
         this.unitPrice = unitPrice;
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n\t\t{" +
+                "productId=" + productId +
+                ", name='" + name + '\'' +
+                ", unitPrice=" + unitPrice +
+                ", description='" + description + '\'' +
+                "}";
+    }
 }

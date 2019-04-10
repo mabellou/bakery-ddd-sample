@@ -5,17 +5,27 @@ import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
 import com.mabellou.dddsamplemab.domain.model.invoice.InvoiceId;
 import com.mabellou.dddsamplemab.domain.model.invoice.InvoiceStatus;
 import com.mabellou.dddsamplemab.domain.shared.Entity;
+import com.mabellou.dddsamplemab.domain.shared.Event;
+import com.mabellou.dddsamplemab.domain.shared.EventStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class PlacedOrder implements Entity<PlacedOrder> {
+    private Logger logger = LoggerFactory.getLogger(PlacedOrder.class);
+
     private PlacedOrderId placedOrderId;
     private LocalDateTime creationDate;
     private CustomerId customerId;
     private List<PlacedOrderLine> placedOrderLines;
+
+    private List<Event> events = new ArrayList<>();
+    private Integer version;
 
     public PlacedOrder(final PlacedOrderId placedOrderId,
                        final LocalDateTime creationDate,
@@ -26,10 +36,14 @@ public class PlacedOrder implements Entity<PlacedOrder> {
         Objects.requireNonNull(customerId);
         Objects.requireNonNull(placedOrderLines);
 
-        this.placedOrderId = placedOrderId;
-        this.creationDate = creationDate;
-        this.customerId = customerId;
-        this.placedOrderLines = placedOrderLines;
+        apply(new OrderPlacedEvent(placedOrderId, creationDate, customerId, placedOrderLines));
+    }
+
+    public PlacedOrder(EventStream stream){
+        this.version = stream.version;
+        for(Event event: stream.events){
+            mutate(event);
+        }
     }
 
     public PlacedOrderId placedOrderId() {
@@ -62,6 +76,34 @@ public class PlacedOrder implements Entity<PlacedOrder> {
                 InvoiceStatus.NOT_PAID,
                 this.totalPrice()
         );
+    }
+
+    public List<Event> changes() {
+        return events;
+    }
+
+    public Integer version(){
+        return version;
+    }
+
+    public void apply(Event event){
+        events.add(event);
+        mutate(event);
+    }
+
+    protected void mutate(Event event){
+        if(event instanceof OrderPlacedEvent){
+            when((OrderPlacedEvent) event);
+        }
+    }
+
+    protected void when(OrderPlacedEvent event){
+        logger.info("The event {} is applied!", event.eventName);
+        this.placedOrderId = event.placedOrderId;
+        this.creationDate = event.creationDate;
+        this.customerId = event.customerId;
+        this.placedOrderLines = event.placedOrderLines;
+        this.version = 0;
     }
 
     @Override

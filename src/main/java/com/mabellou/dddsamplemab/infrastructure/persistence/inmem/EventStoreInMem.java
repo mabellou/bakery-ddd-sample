@@ -112,14 +112,15 @@ public class EventStoreInMem implements EventStore {
     private void appendEventToFile(EntityId entityId, int expectedVersion, List<Event> events){
         long pid = ProcessHandle.current().pid();
 
+        if(eventStore.isEmpty()){
+            file.delete();
+        }
+
         try (FileWriter writer = new FileWriter(file, true)) {
-            if(eventStore.isEmpty()){
-                writer.write("\n");
-            }
 
             for(Event event : events){
                 String eventString =
-                        String.format("Process %s: %s (version: %s) - %s\n", pid, entityId.idString(), expectedVersion, event);
+                        String.format("Process %s: %s (version: %s) - \n\t%s\n\n", pid, entityId.idString(), expectedVersion, event);
                 writer.write(eventString);
             }
         } catch (Exception e) {

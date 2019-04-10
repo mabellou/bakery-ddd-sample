@@ -78,7 +78,7 @@ public class CatalogInMem implements Catalog {
             new AvailableProduct(
                     productId,
                     BAGUETTE,
-                    new BigDecimal(0.7)
+                    new BigDecimal("1.5")
             )
         );
     }

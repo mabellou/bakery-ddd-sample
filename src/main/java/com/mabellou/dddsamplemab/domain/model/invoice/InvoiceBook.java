@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InvoiceBook {
-    void add(Invoice invoice);
+    void save(Invoice invoice);
     List<Invoice> findAll();
     Optional<Invoice> findById(InvoiceId invoiceId);
     Optional<Invoice> findByOrderId(PlacedOrderId placedOrderId);

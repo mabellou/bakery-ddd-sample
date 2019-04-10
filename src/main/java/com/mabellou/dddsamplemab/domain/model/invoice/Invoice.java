@@ -3,16 +3,27 @@ package com.mabellou.dddsamplemab.domain.model.invoice;
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import com.mabellou.dddsamplemab.domain.model.placedorder.PlacedOrderId;
 import com.mabellou.dddsamplemab.domain.shared.Entity;
+import com.mabellou.dddsamplemab.domain.shared.Event;
+import com.mabellou.dddsamplemab.domain.shared.EventStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Invoice implements Entity<Invoice> {
+    private Logger logger = LoggerFactory.getLogger(Invoice.class);
+
     private InvoiceId invoiceId;
     private CustomerId customerId;
     private PlacedOrderId placedOrderId;
     private InvoiceStatus invoiceStatus;
     private BigDecimal amount;
+
+    private List<Event> events = new ArrayList<>();
+    private Integer version;
 
     public Invoice(final InvoiceId invoiceId,
                    final CustomerId customerId,
@@ -25,14 +36,14 @@ public class Invoice implements Entity<Invoice> {
         Objects.requireNonNull(invoiceStatus);
         Objects.requireNonNull(amount);
 
-        this.invoiceId = invoiceId;
-        this.customerId = customerId;
-        this.placedOrderId = placedOrderId;
-        this.invoiceStatus = invoiceStatus;
-        if(amount.compareTo(BigDecimal.ZERO) < 0){
-            this.invoiceStatus = InvoiceStatus.PAID;
+        apply(new InvoiceGeneratedEvent(invoiceId, customerId, placedOrderId, invoiceStatus, amount));
+    }
+
+    public Invoice(EventStream stream){
+        this.version = stream.version;
+        for(Event event: stream.events){
+            mutate(event);
         }
-        this.amount = amount;
     }
 
     public InvoiceId invoiceId() {
@@ -53,6 +64,38 @@ public class Invoice implements Entity<Invoice> {
 
     public BigDecimal amount() {
         return amount;
+    }
+
+    public List<Event> changes() {
+        return events;
+    }
+
+    public Integer version(){
+        return version;
+    }
+
+    public void apply(Event event){
+        events.add(event);
+        mutate(event);
+    }
+
+    protected void mutate(Event event){
+        if(event instanceof InvoiceGeneratedEvent){
+            when((InvoiceGeneratedEvent) event);
+        }
+    }
+
+    protected void when(InvoiceGeneratedEvent event){
+        logger.info("The event {} is applied!", event.eventName);
+        this.invoiceId = event.invoiceId;
+        this.customerId = event.customerId;
+        this.placedOrderId = event.placedOrderId;
+        this.invoiceStatus = event.invoiceStatus;
+        if(BigDecimal.ZERO.compareTo(event.amount) >= 0){
+            this.invoiceStatus = InvoiceStatus.PAID;
+        }
+        this.amount = event.amount;
+        this.version = 0;
     }
 
     @Override

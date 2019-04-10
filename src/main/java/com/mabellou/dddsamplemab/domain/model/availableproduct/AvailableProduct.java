@@ -111,9 +111,9 @@ public class AvailableProduct implements Entity<AvailableProduct> {
     @Override
     public String toString() {
         return "AvailableProduct{" +
-                "productId=" + productId +
+                "productId=" + productId.idString() +
                 ", name='" + name + '\'' +
-                ", unitPrice='" + unitPrice + '\'' +
+                ", unitPrice='" + unitPrice.toPlainString() + '\'' +
                 ", description='" + description + '\'' +
                 '}';
     }

@@ -29,7 +29,6 @@ public class RegisteredCustomerListInMem implements RegisteredCustomerList {
         return eventStore.findAll("Customer", Customer::new);
     }
 
-
     @Override
     public void save(Customer customer) {
         eventStore.appendToStream(customer.customerId(), customer.version(), customer.changes());

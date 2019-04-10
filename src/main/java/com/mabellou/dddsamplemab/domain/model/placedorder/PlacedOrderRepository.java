@@ -8,7 +8,7 @@ public interface PlacedOrderRepository {
 
     List<PlacedOrder> findAll();
 
-    void add(PlacedOrder placedOrder);
+    void save(PlacedOrder placedOrder);
 
     PlacedOrderId nextPlacedOrderId();
 }

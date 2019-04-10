@@ -47,4 +47,13 @@ public class PlacedOrderLine implements ValueObject<PlacedOrderLine> {
     public int hashCode() {
         return Objects.hash(itemNumber, productId, unitPrice);
     }
+
+    @Override
+    public String toString() {
+        return "PlacedOrderLine{" +
+                "itemNumber=" + itemNumber +
+                ", productId=" + productId.idString() +
+                ", unitPrice=" + unitPrice +
+                '}';
+    }
 }

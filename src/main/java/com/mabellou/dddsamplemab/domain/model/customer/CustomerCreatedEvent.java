@@ -18,4 +18,14 @@ public class CustomerCreatedEvent extends Event {
         this.address = address;
         this.email = email;
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "\n\t\t{" +
+                "customerId=" + customerId.idString() +
+                ", customerName=" + customerName +
+                ", address=" + address +
+                ", email=" + email +
+                "}";
+    }
 }
