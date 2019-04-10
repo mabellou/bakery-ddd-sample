@@ -6,6 +6,8 @@ import com.mabellou.dddsamplemab.domain.shared.EventStore;
 import com.mabellou.dddsamplemab.domain.shared.EventStream;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ public class EventStoreInMem implements EventStore {
     private Map<EntityId, List<Event>> eventStore;
     private Map<String, List<EntityId>> eventStoreByEntity;
     private Map<EntityId, Integer> eventStoreVersion;
+    private File file = new File("append.txt");
 
     public EventStoreInMem() {
         this.eventStore = new HashMap<>();
@@ -79,13 +82,15 @@ public class EventStoreInMem implements EventStore {
 
         if(existingEvents != null){
             if(existingVersion == expectedVersion){
-                existingEvents.addAll(events);
                 existingVersion = existingVersion + 1;
+                appendEventToFile(entityId, existingVersion, events);
+                existingEvents.addAll(events);
                 eventStoreVersion.put(entityId, existingVersion);
             } else{
                 throw new IllegalStateException("Optimistic locking issue!");
             }
         } else {
+            appendEventToFile(entityId, expectedVersion, events);
             eventStore.put(entityId, events);
             eventStoreVersion.put(entityId, expectedVersion);
         }
@@ -102,5 +107,24 @@ public class EventStoreInMem implements EventStore {
                 eventStoreByEntity.put(entityName, existingEventsByEntity);
             }
         }
+    }
+
+    private void appendEventToFile(EntityId entityId, int expectedVersion, List<Event> events){
+        long pid = ProcessHandle.current().pid();
+
+        try (FileWriter writer = new FileWriter(file, true)) {
+            if(eventStore.isEmpty()){
+                writer.write("\n");
+            }
+
+            for(Event event : events){
+                String eventString =
+                        String.format("Process %s: %s (version: %s) - %s\n", pid, entityId.idString(), expectedVersion, event);
+                writer.write(eventString);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

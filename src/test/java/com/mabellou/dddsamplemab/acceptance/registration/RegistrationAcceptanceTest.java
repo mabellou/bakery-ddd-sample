@@ -54,7 +54,7 @@ public class RegistrationAcceptanceTest extends AbstractAcceptanceTest {
 
     @Test
     public void changeAddress(){
-        CustomerId customerId = new CustomerId("A");
+        CustomerId customerId = registeredCustomerList.nextCustomerId();
         registeredCustomerList.save(TestObjects.createCustomer(customerId));
 
         given()
