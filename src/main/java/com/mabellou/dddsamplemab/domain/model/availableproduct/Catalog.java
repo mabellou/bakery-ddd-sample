@@ -7,5 +7,5 @@ public interface Catalog {
     List<AvailableProduct> findAll();
     Optional<AvailableProduct> findById(ProductId productId);
     ProductId nextProductId();
-    void add(AvailableProduct product);
+    void save(AvailableProduct product);
 }

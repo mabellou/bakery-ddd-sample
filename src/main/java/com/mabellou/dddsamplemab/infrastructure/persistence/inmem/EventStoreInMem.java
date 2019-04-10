@@ -1,15 +1,15 @@
 package com.mabellou.dddsamplemab.infrastructure.persistence.inmem;
 
+import com.mabellou.dddsamplemab.domain.model.customer.Customer;
+import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import com.mabellou.dddsamplemab.domain.shared.EntityId;
 import com.mabellou.dddsamplemab.domain.shared.Event;
 import com.mabellou.dddsamplemab.domain.shared.EventStore;
 import com.mabellou.dddsamplemab.domain.shared.EventStream;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -23,6 +23,28 @@ public class EventStoreInMem implements EventStore {
         this.eventStore = new HashMap<>();
         this.eventStoreVersion = new HashMap<>();
         this.eventStoreByEntity = new HashMap<>();
+    }
+
+    public <T> Optional<T> findById(EntityId entityId, Function<EventStream, T> createEntity) {
+        EventStream eventStream = loadEventStream(entityId);
+        if(eventStream.events.isEmpty()){
+            return Optional.empty();
+        }
+        return Optional.of(createEntity.apply(eventStream));
+    }
+
+    public <T> List<T> findAll(String entityName, Function<EventStream, T> createEntity) {
+        List<EventStream> eventStreams = loadEventStreams(entityName);
+        return eventStreams.stream()
+                .map(createEntity)
+                .collect(Collectors.toList());
+    }
+
+    public <T> T nextId(Function<String, T> createEntityId) {
+        String random = UUID.randomUUID().toString().toUpperCase();
+        return createEntityId.apply(
+                random.substring(0, random.indexOf("-"))
+        );
     }
 
     @Override

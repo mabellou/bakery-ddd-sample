@@ -3,6 +3,7 @@ package com.mabellou.dddsamplemab.infrastructure.persistence.inmem;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.AvailableProduct;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.Catalog;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.ProductId;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -10,47 +11,45 @@ import java.util.*;
 
 @Component
 public class CatalogInMem implements Catalog {
+    private EventStoreInMem eventStore;
 
-    private Map<ProductId, AvailableProduct> catalogDb;
     private static final String PAIN_AU_CHOCOLAT = "Pain au chocolat";
     private static final String CROISSANT = "Croissant";
     private static final String BAGUETTE = "Baguette";
 
-    public CatalogInMem() {
-        this.catalogDb = new HashMap<>();
+    @Autowired
+    public CatalogInMem(EventStoreInMem eventStore) {
+        this.eventStore = eventStore;
         addPainAuChocolat();
         addCroissant();
         addBaguette();
     }
 
     @Override
-    public List<AvailableProduct> findAll() {
-        return new ArrayList<>(catalogDb.values());
+    public Optional<AvailableProduct> findById(ProductId productId) {
+        return eventStore.findById(productId, AvailableProduct::new);
     }
 
     @Override
-    public Optional<AvailableProduct> findById(ProductId productId){
-        AvailableProduct availableProduct = catalogDb.get(productId);
-        return availableProduct == null ? Optional.empty() : Optional.of(availableProduct);
+    public List<AvailableProduct> findAll() {
+        return eventStore.findAll("AvailableProduct", AvailableProduct::new);
+    }
+
+
+    @Override
+    public void save(AvailableProduct availableProduct) {
+        eventStore.appendToStream(availableProduct.productId(), availableProduct.version(), availableProduct.changes());
     }
 
     @Override
     public ProductId nextProductId() {
-        String random = UUID.randomUUID().toString().toUpperCase();
-        return new ProductId(
-                random.substring(0, random.indexOf("-"))
-        );
-    }
-
-    @Override
-    public void add(AvailableProduct availableProduct){
-        catalogDb.put(availableProduct.productId(), availableProduct);
+        return eventStore.nextId(ProductId::new);
     }
 
     private void addPainAuChocolat(){
         ProductId productId = this.nextProductId();
 
-        add(
+        save(
             new AvailableProduct(
                     productId,
                     PAIN_AU_CHOCOLAT,
@@ -62,7 +61,7 @@ public class CatalogInMem implements Catalog {
     private void addCroissant(){
         ProductId productId = this.nextProductId();
 
-        add(
+        save(
             new AvailableProduct(
                     productId,
                     CROISSANT,
@@ -74,7 +73,7 @@ public class CatalogInMem implements Catalog {
     private void addBaguette(){
         ProductId productId = this.nextProductId();
 
-        add(
+        save(
             new AvailableProduct(
                     productId,
                     BAGUETTE,

@@ -2,6 +2,7 @@ package com.mabellou.dddsamplemab.domain.model.availableproduct;
 
 import com.mabellou.dddsamplemab.domain.shared.Entity;
 import com.mabellou.dddsamplemab.domain.shared.Event;
+import com.mabellou.dddsamplemab.domain.shared.EventStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +13,9 @@ import java.util.Objects;
 
 public class AvailableProduct implements Entity<AvailableProduct> {
     private Logger logger = LoggerFactory.getLogger(AvailableProduct.class);
+
     private List<Event> events = new ArrayList<>();
+    private Integer version;
 
     private ProductId productId;
     private String name;
@@ -36,6 +39,13 @@ public class AvailableProduct implements Entity<AvailableProduct> {
         apply(new AvailableProductCreatedEvent(productId, name, unitPrice, description));
     }
 
+    public AvailableProduct(EventStream stream){
+        this.version = stream.version;
+        for(Event event: stream.events){
+            mutate(event);
+        }
+    }
+
     public void apply(Event event){
         events.add(event);
         mutate(event);
@@ -53,6 +63,7 @@ public class AvailableProduct implements Entity<AvailableProduct> {
         this.name = event.name;
         this.unitPrice = event.unitPrice;
         this.description = event.description;
+        this.version = 0;
     }
 
     public ProductId productId(){
@@ -73,6 +84,10 @@ public class AvailableProduct implements Entity<AvailableProduct> {
 
     public List<Event> changes() {
         return events;
+    }
+
+    public Integer version(){
+        return version;
     }
 
     @Override

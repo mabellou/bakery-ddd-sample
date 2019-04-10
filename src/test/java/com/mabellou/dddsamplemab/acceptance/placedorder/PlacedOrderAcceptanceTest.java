@@ -54,10 +54,10 @@ public class PlacedOrderAcceptanceTest extends AbstractAcceptanceTest {
         registeredCustomerList.save(customer);
 
         AvailableProduct product1 = createPainAuChocolat_1euro(catalog.nextProductId());
-        catalog.add(product1);
+        catalog.save(product1);
 
         AvailableProduct product2 = createCroissant_1euro(catalog.nextProductId());
-        catalog.add(product2);
+        catalog.save(product2);
 
         String request = placeAnOrderRequestWithTwoLines(
                 customer.customerId(),
