@@ -1,6 +1,6 @@
-package com.mabellou.dddsamplemab.application.command;
+package com.mabellou.dddsamplemab.application;
 
-import com.mabellou.dddsamplemab.application.command.command.PlaceAnOrderCommand;
+import com.mabellou.dddsamplemab.application.command.PlaceAnOrderCommand;
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
 import com.mabellou.dddsamplemab.domain.model.invoice.InvoiceBook;

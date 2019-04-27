@@ -1,7 +1,7 @@
 package com.mabellou.dddsamplemab.interfaces.rest.command;
 
-import com.mabellou.dddsamplemab.application.command.PlacedOrderCommandService;
-import com.mabellou.dddsamplemab.application.command.command.PlaceAnOrderCommand;
+import com.mabellou.dddsamplemab.application.PlacedOrderCommandService;
+import com.mabellou.dddsamplemab.application.command.PlaceAnOrderCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

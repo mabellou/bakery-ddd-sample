@@ -1,7 +1,7 @@
-package com.mabellou.dddsamplemab.application.command;
+package com.mabellou.dddsamplemab.application;
 
-import com.mabellou.dddsamplemab.application.command.command.ChangeCustomerAddressCommand;
-import com.mabellou.dddsamplemab.application.command.command.RegistrationCommand;
+import com.mabellou.dddsamplemab.application.command.ChangeCustomerAddressCommand;
+import com.mabellou.dddsamplemab.application.command.RegistrationCommand;
 import com.mabellou.dddsamplemab.domain.model.customer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

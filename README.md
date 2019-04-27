@@ -1,5 +1,9 @@
 ## TODO
-- CQRS
+- CQRS: 
+    - build the event bus/event handler layer
+    - build the database for query
+    - build the thin data layer layer
+    - break dependency between CatalogQueryService and the repo
 - Inner bus events
 - enrich the domain logic
 - Use eventStore

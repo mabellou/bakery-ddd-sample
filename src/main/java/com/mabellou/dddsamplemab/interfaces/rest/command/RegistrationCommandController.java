@@ -1,8 +1,8 @@
 package com.mabellou.dddsamplemab.interfaces.rest.command;
 
-import com.mabellou.dddsamplemab.application.command.RegistrationCommandService;
-import com.mabellou.dddsamplemab.application.command.command.ChangeCustomerAddressCommand;
-import com.mabellou.dddsamplemab.application.command.command.RegistrationCommand;
+import com.mabellou.dddsamplemab.application.RegistrationCommandService;
+import com.mabellou.dddsamplemab.application.command.ChangeCustomerAddressCommand;
+import com.mabellou.dddsamplemab.application.command.RegistrationCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

@@ -1,7 +1,7 @@
 package com.mabellou.dddsamplemab.interfaces.rest.query;
 
-import com.mabellou.dddsamplemab.application.query.PlacedOrderQueryService;
-import com.mabellou.dddsamplemab.application.query.representation.InvoiceRepresentation;
+import com.mabellou.dddsamplemab.query.PlacedOrderQueryService;
+import com.mabellou.dddsamplemab.query.representation.InvoiceRepresentation;
 import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

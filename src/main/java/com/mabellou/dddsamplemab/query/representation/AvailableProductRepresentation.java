@@ -1,4 +1,4 @@
-package com.mabellou.dddsamplemab.application.query.representation;
+package com.mabellou.dddsamplemab.query.representation;
 
 import com.mabellou.dddsamplemab.domain.model.availableproduct.AvailableProduct;
 
