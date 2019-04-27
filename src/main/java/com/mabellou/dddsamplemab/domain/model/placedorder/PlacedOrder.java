@@ -12,11 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class PlacedOrder implements Entity<PlacedOrder> {
+public class PlacedOrder extends Entity<PlacedOrder> {
     private Logger logger = LoggerFactory.getLogger(PlacedOrder.class);
 
     private PlacedOrderId placedOrderId;
@@ -24,8 +23,9 @@ public class PlacedOrder implements Entity<PlacedOrder> {
     private CustomerId customerId;
     private List<PlacedOrderLine> placedOrderLines;
 
-    private List<Event> events = new ArrayList<>();
-    private Integer version;
+    public PlacedOrder(EventStream stream){
+        buildFrom(stream);
+    }
 
     public PlacedOrder(final PlacedOrderId placedOrderId,
                        final LocalDateTime creationDate,
@@ -37,13 +37,6 @@ public class PlacedOrder implements Entity<PlacedOrder> {
         Objects.requireNonNull(placedOrderLines);
 
         apply(new OrderPlacedEvent(placedOrderId, creationDate, customerId, placedOrderLines));
-    }
-
-    public PlacedOrder(EventStream stream){
-        this.version = stream.version;
-        for(Event event: stream.events){
-            mutate(event);
-        }
     }
 
     public PlacedOrderId placedOrderId() {
@@ -76,19 +69,6 @@ public class PlacedOrder implements Entity<PlacedOrder> {
                 InvoiceStatus.NOT_PAID,
                 this.totalPrice()
         );
-    }
-
-    public List<Event> changes() {
-        return events;
-    }
-
-    public Integer version(){
-        return version;
-    }
-
-    public void apply(Event event){
-        events.add(event);
-        mutate(event);
     }
 
     protected void mutate(Event event){

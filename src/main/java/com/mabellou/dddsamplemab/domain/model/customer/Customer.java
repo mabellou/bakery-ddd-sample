@@ -6,19 +6,19 @@ import com.mabellou.dddsamplemab.domain.shared.EventStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-public class Customer implements Entity<Customer> {
+public class Customer extends Entity<Customer> {
     private Logger logger = LoggerFactory.getLogger(Customer.class);
 
     private CustomerId customerId;
     private CustomerName customerName;
     private Address address;
     private Email email;
-    private List<Event> events = new ArrayList<>();
-    private Integer version;
+
+    public Customer(EventStream stream){
+        buildFrom(stream);
+    }
 
     public Customer(final CustomerId customerId,
                     final CustomerName customerName,
@@ -37,19 +37,6 @@ public class Customer implements Entity<Customer> {
         apply(new AddressChangedEvent(this.customerId, address));
     }
 
-
-    public Customer(EventStream stream){
-        this.version = stream.version;
-        for(Event event: stream.events){
-            mutate(event);
-        }
-    }
-
-    public void apply(Event event){
-        events.add(event);
-        mutate(event);
-    }
-
     protected void mutate(Event event){
         if(event instanceof CustomerCreatedEvent){
             when((CustomerCreatedEvent) event);
@@ -64,7 +51,6 @@ public class Customer implements Entity<Customer> {
         this.customerName = event.customerName;
         this.address = event.address;
         this.email = event.email;
-        this.version = 0;
     }
 
     protected void when(AddressChangedEvent event){
@@ -78,14 +64,6 @@ public class Customer implements Entity<Customer> {
 
     public Address address(){
         return address;
-    }
-
-    public List<Event> changes() {
-        return events;
-    }
-
-    public Integer version(){
-        return version;
     }
 
     @Override

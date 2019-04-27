@@ -9,11 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-public class Invoice implements Entity<Invoice> {
+public class Invoice extends Entity<Invoice> {
     private Logger logger = LoggerFactory.getLogger(Invoice.class);
 
     private InvoiceId invoiceId;
@@ -22,8 +20,9 @@ public class Invoice implements Entity<Invoice> {
     private InvoiceStatus invoiceStatus;
     private BigDecimal amount;
 
-    private List<Event> events = new ArrayList<>();
-    private Integer version;
+    public Invoice(EventStream stream){
+        buildFrom(stream);
+    }
 
     public Invoice(final InvoiceId invoiceId,
                    final CustomerId customerId,
@@ -37,13 +36,6 @@ public class Invoice implements Entity<Invoice> {
         Objects.requireNonNull(amount);
 
         apply(new InvoiceGeneratedEvent(invoiceId, customerId, placedOrderId, invoiceStatus, amount));
-    }
-
-    public Invoice(EventStream stream){
-        this.version = stream.version;
-        for(Event event: stream.events){
-            mutate(event);
-        }
     }
 
     public InvoiceId invoiceId() {
@@ -64,19 +56,6 @@ public class Invoice implements Entity<Invoice> {
 
     public BigDecimal amount() {
         return amount;
-    }
-
-    public List<Event> changes() {
-        return events;
-    }
-
-    public Integer version(){
-        return version;
-    }
-
-    public void apply(Event event){
-        events.add(event);
-        mutate(event);
     }
 
     protected void mutate(Event event){

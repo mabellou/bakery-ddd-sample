@@ -7,21 +7,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-public class AvailableProduct implements Entity<AvailableProduct> {
+public class AvailableProduct extends Entity<AvailableProduct> {
     private Logger logger = LoggerFactory.getLogger(AvailableProduct.class);
-
-    private List<Event> events = new ArrayList<>();
-    private Integer version;
 
     private ProductId productId;
     private String name;
     private String description;
     private BigDecimal unitPrice;
 
+    public AvailableProduct(EventStream stream){
+        buildFrom(stream);
+    }
 
     public AvailableProduct(ProductId productId, String name, BigDecimal unitPrice) {
         Objects.requireNonNull(productId);
@@ -39,18 +37,6 @@ public class AvailableProduct implements Entity<AvailableProduct> {
         apply(new AvailableProductCreatedEvent(productId, name, unitPrice, description));
     }
 
-    public AvailableProduct(EventStream stream){
-        this.version = stream.version;
-        for(Event event: stream.events){
-            mutate(event);
-        }
-    }
-
-    public void apply(Event event){
-        events.add(event);
-        mutate(event);
-    }
-
     protected void mutate(Event event){
         if(event instanceof AvailableProductCreatedEvent){
             when((AvailableProductCreatedEvent) event);
@@ -63,7 +49,6 @@ public class AvailableProduct implements Entity<AvailableProduct> {
         this.name = event.name;
         this.unitPrice = event.unitPrice;
         this.description = event.description;
-        this.version = 0;
     }
 
     public ProductId productId(){
@@ -80,14 +65,6 @@ public class AvailableProduct implements Entity<AvailableProduct> {
 
     public BigDecimal unitPrice(){
         return unitPrice;
-    }
-
-    public List<Event> changes() {
-        return events;
-    }
-
-    public Integer version(){
-        return version;
     }
 
     @Override
