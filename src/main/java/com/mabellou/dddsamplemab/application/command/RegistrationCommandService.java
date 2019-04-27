@@ -1,7 +1,7 @@
-package com.mabellou.dddsamplemab.application;
+package com.mabellou.dddsamplemab.application.command;
 
-import com.mabellou.dddsamplemab.application.command.ChangeCustomerAddressCommand;
-import com.mabellou.dddsamplemab.application.command.RegistrationCommand;
+import com.mabellou.dddsamplemab.application.command.command.ChangeCustomerAddressCommand;
+import com.mabellou.dddsamplemab.application.command.command.RegistrationCommand;
 import com.mabellou.dddsamplemab.domain.model.customer.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegistrationService{
+public class RegistrationCommandService {
 
-    private Logger logger = LoggerFactory.getLogger(RegistrationService.class);
+    private Logger logger = LoggerFactory.getLogger(RegistrationCommandService.class);
 
     private RegisteredCustomerList registeredCustomerList;
 
     @Autowired
-    public RegistrationService(RegisteredCustomerList registeredCustomerList
+    public RegistrationCommandService(RegisteredCustomerList registeredCustomerList
     ) {
         this.registeredCustomerList = registeredCustomerList;
     }

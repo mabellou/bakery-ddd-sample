@@ -1,8 +1,8 @@
-package com.mabellou.dddsamplemab.interfaces.rest;
+package com.mabellou.dddsamplemab.interfaces.rest.command;
 
-import com.mabellou.dddsamplemab.application.RegistrationService;
-import com.mabellou.dddsamplemab.application.command.ChangeCustomerAddressCommand;
-import com.mabellou.dddsamplemab.application.command.RegistrationCommand;
+import com.mabellou.dddsamplemab.application.command.RegistrationCommandService;
+import com.mabellou.dddsamplemab.application.command.command.ChangeCustomerAddressCommand;
+import com.mabellou.dddsamplemab.application.command.command.RegistrationCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,19 +15,19 @@ import java.net.URI;
 
 @Controller
 @RequestMapping
-public class RegistrationController {
+public class RegistrationCommandController {
 
-    private final RegistrationService registrationService;
+    private final RegistrationCommandService registrationCommandService;
 
     @Autowired
-    public RegistrationController(final RegistrationService registrationService) {
-        this.registrationService = registrationService;
+    public RegistrationCommandController(final RegistrationCommandService registrationCommandService) {
+        this.registrationCommandService = registrationCommandService;
     }
 
     @PostMapping("/registration")
     public ResponseEntity register(@RequestBody RegistrationCommand registrationCommand){
 
-        String customerId = registrationService.registerNewCustomer(registrationCommand);
+        String customerId = registrationCommandService.registerNewCustomer(registrationCommand);
 
         URI uri = URI.create(customerId);
         return ResponseEntity.created(uri).build();
@@ -35,7 +35,7 @@ public class RegistrationController {
 
     @PutMapping("/customer/{id}/address")
     public ResponseEntity changeAddress(@RequestBody ChangeCustomerAddressCommand command){
-        registrationService.changeCustomerAddress(command);
+        registrationCommandService.changeCustomerAddress(command);
 
         return ResponseEntity.noContent().build();
     }

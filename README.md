@@ -1,5 +1,4 @@
 ## TODO
-- refactor domain entity/events
 - CQRS
 - Inner bus events
 - enrich the domain logic

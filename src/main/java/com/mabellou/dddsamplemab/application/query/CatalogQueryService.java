@@ -1,4 +1,4 @@
-package com.mabellou.dddsamplemab.application;
+package com.mabellou.dddsamplemab.application.query;
 
 import com.mabellou.dddsamplemab.domain.model.availableproduct.AvailableProduct;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.Catalog;
@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class CatalogService {
-    private Logger logger = LoggerFactory.getLogger(CatalogService.class);
+public class CatalogQueryService {
+    private Logger logger = LoggerFactory.getLogger(CatalogQueryService.class);
 
     private final Catalog catalog;
 
     @Autowired
-    public CatalogService(Catalog catalog) {
+    public CatalogQueryService(Catalog catalog) {
         this.catalog = catalog;
     }
 

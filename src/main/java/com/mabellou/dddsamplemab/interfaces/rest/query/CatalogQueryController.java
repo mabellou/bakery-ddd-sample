@@ -1,7 +1,7 @@
-package com.mabellou.dddsamplemab.interfaces.rest;
+package com.mabellou.dddsamplemab.interfaces.rest.query;
 
-import com.mabellou.dddsamplemab.application.CatalogService;
-import com.mabellou.dddsamplemab.application.representation.AvailableProductRepresentation;
+import com.mabellou.dddsamplemab.application.query.CatalogQueryService;
+import com.mabellou.dddsamplemab.application.query.representation.AvailableProductRepresentation;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.AvailableProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,18 +14,18 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/catalog")
-public class CatalogController {
+public class CatalogQueryController {
 
-    private final CatalogService catalogService;
+    private final CatalogQueryService catalogQueryService;
 
     @Autowired
-    public CatalogController(CatalogService catalogService) {
-        this.catalogService = catalogService;
+    public CatalogQueryController(CatalogQueryService catalogQueryService) {
+        this.catalogQueryService = catalogQueryService;
     }
 
     @GetMapping
     public ResponseEntity catalog(){
-        List<AvailableProduct> catalog = catalogService.catalog();
+        List<AvailableProduct> catalog = catalogQueryService.catalog();
 
         List<AvailableProductRepresentation> catalogRepresentation = catalog
                 .stream()

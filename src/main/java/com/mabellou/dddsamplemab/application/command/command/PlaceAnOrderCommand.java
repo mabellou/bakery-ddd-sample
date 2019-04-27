@@ -1,4 +1,4 @@
-package com.mabellou.dddsamplemab.application.command;
+package com.mabellou.dddsamplemab.application.command.command;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

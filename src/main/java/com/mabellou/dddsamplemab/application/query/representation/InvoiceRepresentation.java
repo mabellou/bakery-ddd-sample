@@ -1,4 +1,4 @@
-package com.mabellou.dddsamplemab.application.representation;
+package com.mabellou.dddsamplemab.application.query.representation;
 
 import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
 

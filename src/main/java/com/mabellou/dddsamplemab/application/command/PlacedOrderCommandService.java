@@ -1,6 +1,6 @@
-package com.mabellou.dddsamplemab.application;
+package com.mabellou.dddsamplemab.application.command;
 
-import com.mabellou.dddsamplemab.application.command.PlaceAnOrderCommand;
+import com.mabellou.dddsamplemab.application.command.command.PlaceAnOrderCommand;
 import com.mabellou.dddsamplemab.domain.model.customer.CustomerId;
 import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
 import com.mabellou.dddsamplemab.domain.model.invoice.InvoiceBook;
@@ -14,18 +14,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class PlacedOrderService {
+public class PlacedOrderCommandService {
 
-    private Logger logger = LoggerFactory.getLogger(PlacedOrderService.class);
+    private Logger logger = LoggerFactory.getLogger(PlacedOrderCommandService.class);
 
     private PlacedOrderRepository placedOrderRepository;
     private PlacedOrderLineService placedOrderLineService;
     private InvoiceBook invoiceBook;
 
     @Autowired
-    public PlacedOrderService(final PlacedOrderRepository placedOrderRepository,
-                              final PlacedOrderLineService placedOrderLineService,
-                              final InvoiceBook invoiceBook) {
+    public PlacedOrderCommandService(final PlacedOrderRepository placedOrderRepository,
+                                     final PlacedOrderLineService placedOrderLineService,
+                                     final InvoiceBook invoiceBook) {
         this.placedOrderRepository = placedOrderRepository;
         this.placedOrderLineService = placedOrderLineService;
         this.invoiceBook = invoiceBook;
@@ -58,10 +58,5 @@ public class PlacedOrderService {
         return placeAnOrderCommand.orderLines.stream()
                 .map(orderLine -> placedOrderLineService.placeOrderLine(orderLine.productId, orderLine.itemNumber))
                 .collect(Collectors.toList());
-    }
-
-    public Invoice getInvoice(String placedOrderId){
-        return invoiceBook.findByOrderId(new PlacedOrderId(placedOrderId))
-                .orElseThrow(() -> new IllegalStateException("invoice for order not found"));
     }
 }
