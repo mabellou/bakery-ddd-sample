@@ -1,9 +1,7 @@
 package com.mabellou.dddsamplemab.infrastructure.persistence.inmem;
 
-import com.mabellou.dddsamplemab.domain.shared.EntityId;
-import com.mabellou.dddsamplemab.domain.shared.Event;
-import com.mabellou.dddsamplemab.domain.shared.EventStore;
-import com.mabellou.dddsamplemab.domain.shared.EventStream;
+import com.mabellou.dddsamplemab.domain.shared.*;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -19,11 +17,13 @@ public class EventStoreInMem implements EventStore {
     private Map<String, List<EntityId>> eventStoreByEntity;
     private Map<EntityId, Integer> eventStoreVersion;
     private File file = new File("append.txt");
+    private ApplicationEventPublisher applicationEventPublisher;
 
-    public EventStoreInMem() {
+    public EventStoreInMem(ApplicationEventPublisher applicationEventPublisher) {
         this.eventStore = new HashMap<>();
         this.eventStoreVersion = new HashMap<>();
         this.eventStoreByEntity = new HashMap<>();
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public <T> Optional<T> findById(EntityId entityId, Function<EventStream, T> createEntity) {
@@ -81,20 +81,48 @@ public class EventStoreInMem implements EventStore {
         Integer existingVersion = eventStoreVersion.get(entityId);
 
         if(existingEvents != null){
-            if(existingVersion == expectedVersion){
-                existingVersion = existingVersion + 1;
-                appendEventToFile(entityId, existingVersion, events);
-                existingEvents.addAll(events);
-                eventStoreVersion.put(entityId, existingVersion);
-            } else{
-                throw new IllegalStateException("Optimistic locking issue!");
-            }
+            storeEventWhenEntityNotExists(existingVersion, expectedVersion, entityId, existingEvents, events);
         } else {
-            appendEventToFile(entityId, expectedVersion, events);
-            eventStore.put(entityId, events);
-            eventStoreVersion.put(entityId, expectedVersion);
+            storeEvenWhenEntityExists(expectedVersion, entityId, events);
         }
+        storeEventByEntity(events);
+        publishToEventBus(events);
+    }
 
+    private void publishToEventBus(List<Event> events){
+        for(Event e: events){
+            applicationEventPublisher.publishEvent(e);
+        }
+    }
+
+    private void storeEventWhenEntityNotExists(
+            int existingVersion,
+            int expectedVersion,
+            EntityId entityId,
+            List<Event> existingEvents,
+            List<Event> events
+    ){
+        if(existingVersion == expectedVersion){
+            existingVersion = existingVersion + 1;
+            appendEventToFile(entityId, existingVersion, events);
+            existingEvents.addAll(events);
+            eventStoreVersion.put(entityId, existingVersion);
+        } else{
+            throw new IllegalStateException("Optimistic locking issue!");
+        }
+    }
+
+    private void storeEvenWhenEntityExists(
+            int expectedVersion,
+            EntityId entityId,
+            List<Event> events
+    ){
+        appendEventToFile(entityId, expectedVersion, events);
+        eventStore.put(entityId, events);
+        eventStoreVersion.put(entityId, expectedVersion);
+    }
+
+    private void storeEventByEntity(List<Event> events){
         for(Event e: events){
             String entityName = e.entityName;
             List<EntityId> existingEventsByEntity = eventStoreByEntity.get(entityName);

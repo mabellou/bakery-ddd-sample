@@ -1,6 +1,6 @@
 package com.mabellou.dddsamplemab.interfaces.rest.query;
 
-import com.mabellou.dddsamplemab.query.CatalogQueryService;
+import com.mabellou.dddsamplemab.query.service.CatalogQueryService;
 import com.mabellou.dddsamplemab.query.representation.AvailableProductRepresentation;
 import com.mabellou.dddsamplemab.domain.model.availableproduct.AvailableProduct;
 import org.springframework.beans.factory.annotation.Autowired;

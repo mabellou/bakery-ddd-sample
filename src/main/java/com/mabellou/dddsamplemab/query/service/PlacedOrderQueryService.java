@@ -1,4 +1,4 @@
-package com.mabellou.dddsamplemab.query;
+package com.mabellou.dddsamplemab.query.service;
 
 import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
 import com.mabellou.dddsamplemab.domain.model.invoice.InvoiceBook;
