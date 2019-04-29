@@ -1,7 +1,5 @@
 package com.mabellou.dddsamplemab.query.representation;
 
-import com.mabellou.dddsamplemab.domain.model.availableproduct.AvailableProduct;
-
 import java.math.BigDecimal;
 
 public class AvailableProductRepresentation {
@@ -10,10 +8,15 @@ public class AvailableProductRepresentation {
     public final BigDecimal unitPrice;
     public final String description;
 
-    public AvailableProductRepresentation(AvailableProduct availableProduct) {
-        this.id = availableProduct.productId().idString();
-        this.name = availableProduct.name();
-        this.unitPrice = availableProduct.unitPrice();
-        this.description = availableProduct.description();
+    public AvailableProductRepresentation(
+            String id,
+            String name,
+            BigDecimal unitPrice,
+            String description
+    ) {
+        this.id = id;
+        this.name = name;
+        this.unitPrice = unitPrice;
+        this.description = description;
     }
 }

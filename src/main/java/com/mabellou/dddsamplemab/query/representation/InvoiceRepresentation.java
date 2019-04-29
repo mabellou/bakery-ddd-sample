@@ -1,13 +1,22 @@
 package com.mabellou.dddsamplemab.query.representation;
 
-import com.mabellou.dddsamplemab.domain.model.invoice.Invoice;
+import java.math.BigDecimal;
 
 public class InvoiceRepresentation {
-    public final String amount;
+    public final String id;
+    public final String placedOrderId;
+    public final BigDecimal amount;
     public final String status;
 
-    public InvoiceRepresentation(Invoice invoice) {
-        this.amount = invoice.amount().toString();
-        this.status = invoice.invoiceStatus().toString();
+    public InvoiceRepresentation(
+            String id,
+            String placedOrderId,
+            BigDecimal amount,
+            String status
+    ) {
+        this.id = id;
+        this.placedOrderId = placedOrderId;
+        this.amount = amount;
+        this.status = status;
     }
 }

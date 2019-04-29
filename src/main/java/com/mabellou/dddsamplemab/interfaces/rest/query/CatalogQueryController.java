@@ -24,14 +24,9 @@ public class CatalogQueryController {
     }
 
     @GetMapping
-    public ResponseEntity catalog(){
-        List<AvailableProduct> catalog = catalogQueryService.catalog();
+    public ResponseEntity<List<AvailableProductRepresentation>> catalog(){
+        List<AvailableProductRepresentation> catalog = catalogQueryService.catalog();
 
-        List<AvailableProductRepresentation> catalogRepresentation = catalog
-                .stream()
-                .map(AvailableProductRepresentation::new)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(catalogRepresentation);
+        return ResponseEntity.ok(catalog);
     }
 }

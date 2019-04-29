@@ -23,10 +23,9 @@ public class PlacedOrderQueryController {
 
     @GetMapping("/{id}/invoice")
     public ResponseEntity getInvoice(@PathVariable("id") String orderId){
-        Invoice invoice = placedOrderQueryService.getInvoice(orderId);
-        InvoiceRepresentation invoiceRepresentation = new InvoiceRepresentation(invoice);
+        InvoiceRepresentation invoice = placedOrderQueryService.getInvoiceByPlacedOrderId(orderId);
 
-        return ResponseEntity.ok(invoiceRepresentation);
+        return ResponseEntity.ok(invoice);
     }
 
 }
